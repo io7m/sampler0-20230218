@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.io7m.primogenitor</groupId>
+    <artifactId>com.io7m.primogenitor.full</artifactId>
+    <version>7.5.0</version>
+  </parent>
+
+  <groupId>com.io7m.sampler0</groupId>
+  <artifactId>com.io7m.sampler0</artifactId>
+  <version>0.0.1</version>
+  <packaging>jar</packaging>
+
+  <name>com.io7m.sampler0</name>
+  <description>Basic sampler</description>
+  <url>https://www.io7m.com/software/sampler0</url>
+
+  <properties>
+    <io7m.api.previousVersion>0.0.1</io7m.api.previousVersion>
+    <com.io7m.jsamplebuffer.version>0.0.3-SNAPSHOT</com.io7m.jsamplebuffer.version>
+  </properties>
+
+  <licenses>
+    <license>
+      <name>ISC License</name>
+      <url>https://io7m.com/license/isc.txt</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/io7m/sampler0</url>
+    <connection>scm:git:https://github.com/io7m/sampler0</connection>
+    <developerConnection>scm:git:https://github.com/io7m/sampler0</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>io7m</id>
+      <name>io7m</name>
+      <email>code@io7m.com</email>
+      <url>https://io7m.com</url>
+    </developer>
+  </developers>
+
+  <issueManagement>
+    <url>https://github.com/io7m/sampler0/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+
+  <distributionManagement>
+    <site>
+      <id>io7m.com</id>
+      <name>io7m.com</name>
+      <url>https://www.io7m.com/software/sampler0</url>
+    </site>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/sampler0/actions</url>
+  </ciManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>fastutil-core</artifactId>
+      <version>8.5.8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jattribute</groupId>
+      <artifactId>com.io7m.jattribute.core</artifactId>
+      <version>0.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.api</artifactId>
+      <version>${com.io7m.jsamplebuffer.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.vanilla</artifactId>
+      <version>${com.io7m.jsamplebuffer.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jsamplebuffer</groupId>
+      <artifactId>com.io7m.jsamplebuffer.xmedia</artifactId>
+      <version>${com.io7m.jsamplebuffer.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaudiolibs</groupId>
+      <artifactId>jnajack</artifactId>
+      <version>1.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.6</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.4.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.9.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.9.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Produce command-line onejar -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <minimizeJar>false</minimizeJar>
+              <shadedClassifierName>main</shadedClassifierName>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>com.io7m.sampler0.FlailMain</Main-Class>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Ignore dependencies that bytecode analysis misses. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <failOnWarning>true</failOnWarning>
+          <ignoredUnusedDeclaredDependencies>
+            <ignoredUnusedDeclaredDependency>ch.qos.logback:logback-classic:*</ignoredUnusedDeclaredDependency>
+          </ignoredUnusedDeclaredDependencies>
+        </configuration>
+      </plugin>
+
+      <!-- Generate a site -->
+      <plugin>
+        <groupId>com.io7m.minisite</groupId>
+        <artifactId>com.io7m.minisite.maven_plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
